@@ -1,12 +1,12 @@
 "=============================================================================
-" What Is This: Calendar
-" File: calendar.vim
+" What Is This: Diary
+" File: diary.vim
 " Author: Yasuhiro Matsumoto <mattn.jp@gmail.com>
 " Last Change: 2013 Okt 27
 " Version: 2.9
 " Thanks:
 "     Tobias Columbus               : customizable key bindings
-"     Daniel P. Wright              : doc/calendar.txt
+"     Daniel P. Wright              : doc/diary.txt
 "     SethMilliken                  : gave a hint for 2.4
 "     bw1                           : bug fix, new weeknm format
 "     Ingo Karkat                   : bug fix
@@ -50,22 +50,22 @@
 "     2.7  : vim7ish, customizable key bindings
 "     2.6  : new week number format
 "     2.5  : bug fix, 7.2 don't have relativenumber.
-"     2.4  : added g:calendar_options.
+"     2.4  : added g:diary_options.
 "     2.3  : week number like ISO8601
-"            g:calendar_monday and g:calendar_weeknm work together
+"            g:diary_monday and g:diary_weeknm work together
 "     2.2  : http://gist.github.com/355513#file_customizable_keymap.diff
 "            http://gist.github.com/355513#file_winfixwidth.diff
-"     2.1  : bug fix, set filetype 'calendar'.
+"     2.1  : bug fix, set filetype 'diary'.
 "     2.0  : bug fix, many bug fix and enhancements.
 "     1.9  : bug fix, use nnoremap.
 "     1.8  : bug fix, E382 when close diary.
 "     1.7  : bug fix, week number was broken on 2008.
-"     1.6  : added calendar_begin action.
-"            added calendar_end action.
+"     1.6  : added diary_begin action.
+"            added diary_end action.
 "     1.5  : bug fix, fixed ruler formating with strpart.
 "            bug fix, using winfixheight.
 "     1.4a : bug fix, week number was broken on 2005.
-"            added calendar_today action.
+"            added diary_today action.
 "            bug fix, about wrapscan.
 "            bug fix, about today mark.
 "            bug fix, about today navigation.
@@ -84,13 +84,13 @@
 "            add tag for GetLatestVimScripts(AutoInstall)
 "     1.3y : bug fix, few changes
 "            changed color syntax name. (ex. CalNavi, see bottom of this)
-"            changed a map CalendarV for <Leader>cal
-"            changed a map CalendarH for <Leader>caL
+"            changed a map DiaryV for <Leader>cal
+"            changed a map DiaryH for <Leader>caL
 "            (competitive map for cvscommand.vim)
 "            the date on the right-hand side didn't work correctoly.
-"            make a map to rebuild Calendar window(r).
+"            make a map to rebuild Diary window(r).
 "     1.3x : bug fix
-"            viweek can't refer when not set calendar_weeknm.
+"            viweek can't refer when not set diary_weeknm.
 "     1.3w : bug fix
 "            on leap year, week number decreases.
 "     1.3v : bug fix
@@ -103,34 +103,34 @@
 "     1.3t : bug fix
 "             make sure the variables for help
 "     1.3s : bug fix
-"             make a map CalendarV for <Leader>ca
-"            add option calendar_navi_label
+"             make a map DiaryV for <Leader>ca
+"            add option diary_navi_label
 "             see Additional:
-"            add option calendar_focus_today
+"            add option diary_focus_today
 "             see Additional:
 "            add map ? for help
 "     1.3r : bug fix
 "             if clicked navigator, cursor go to strange position.
 "     1.3q : bug fix
-"             coundn't set calendar_navi
+"             coundn't set diary_navi
 "              in its horizontal direction
 "     1.3p : bug fix
-"             coundn't edit diary when the calendar is
+"             coundn't edit diary when the diary is
 "              in its horizontal direction
-"     1.3o : add option calendar_mark, and delete calendar_rmark
+"     1.3o : add option diary_mark, and delete diary_rmark
 "             see Additional:
-"            add option calendar_navi
+"            add option diary_navi
 "             see Additional:
 "     1.3n : bug fix
-"             s:CalendarSign() should use filereadable(expand(sfile)).
+"             s:DiarySign() should use filereadable(expand(sfile)).
 "     1.3m : tuning
-"             using topleft or botright for opening Calendar.
-"            use filereadable for s:CalendarSign().
+"             using topleft or botright for opening Diary.
+"            use filereadable for s:DiarySign().
 "     1.3l : bug fix
-"             if set calendar_monday, it can see that Sep 1st is Sat
+"             if set diary_monday, it can see that Sep 1st is Sat
 "               as well as Aug 31st.
 "     1.3k : bug fix
-"             it didn't escape the file name on calendar.
+"             it didn't escape the file name on diary.
 "     1.3j : support for fixed Gregorian
 "             added the part of Sep 1752.
 "     1.3i : bug fix
@@ -147,16 +147,16 @@
 "     1.3e : added usage for <Leader>
 "            support handler for sign.
 "            see Additional:
-"     1.3d : added higlighting of days that have calendar data associated
+"     1.3d : added higlighting of days that have diary data associated
 "             with it.
 "            bug fix for calculates date.
 "     1.3c : bug fix for MakeDir()
-"            if CalendarMakeDir(sfile) != 0
+"            if DiaryMakeDir(sfile) != 0
 "               v
-"            if s:CalendarMakeDir(sfile) != 0
-"     1.3b : bug fix for calendar_monday.
-"            it didn't work g:calendar_monday correctly.
-"            add g:calendar_version.
+"            if s:DiaryMakeDir(sfile) != 0
+"     1.3b : bug fix for diary_monday.
+"            it didn't work g:diary_monday correctly.
+"            add g:diary_version.
 "            add argument on action handler.
 "            see Additional:
 "     1.3a : bug fix for MakeDir().
@@ -174,29 +174,29 @@
 "            simple solution changed vtoday calculation line divide the
 "            current-date by 1 so as to get 1 digit date.
 "     1.2e : change the way for setting title.
-"            auto configuration for g:calendar_wruler with g:calendar_monday
+"            auto configuration for g:diary_wruler with g:diary_monday
 "     1.2d : add option for show week number.
-"              let g:calendar_weeknm = 1
+"              let g:diary_weeknm = 1
 "            add separator if horizontal.
 "            change all option's name
-"              g:calendar_mnth -> g:calendar_mruler
-"              g:calendar_week -> g:calendar_wruler
-"              g:calendar_smnd -> g:calendar_monday
+"              g:diary_mnth -> g:diary_mruler
+"              g:diary_week -> g:diary_wruler
+"              g:diary_smnd -> g:diary_monday
 "     1.2c : add option for that the week starts with monday.
-"              let g:calendar_smnd = 1
+"              let g:diary_smnd = 1
 "     1.2b : bug fix for modifiable.
 "            setlocal nomodifiable (was set)
 "     1.2a : add default options.
 "            nonumber,foldcolumn=0,nowrap... as making gap
 "     1.2  : support wide display.
-"            add a command CalendarH
+"            add a command DiaryH
 "            add map <s-left> <s-right>
 "     1.1c : extra.
 "            add a titlestring for today.
 "     1.1b : bug fix by Michael Geddes.
 "            it happend when do ':Calender' twice
 "     1.1a : fix misspell.
-"            Calender -> Calendar
+"            Calender -> Diary
 "     1.1  : bug fix.
 "            it"s about strftime("%m")
 "     1.0a : bug fix by Leif Wickland.
@@ -204,29 +204,29 @@
 "     1.0  : first release.
 " TODO:
 "     add the option for diary which is separate or single file.
-" GetLatestVimScripts: 52 1 :AutoInstall: calendar.vim
+" GetLatestVimScripts: 52 1 :AutoInstall: diary.vim
 
 if &compatible
   finish
 endif
 "*****************************************************************
-"* Calendar commands
+"* Diary commands
 "*****************************************************************
-command! -nargs=* Calendar  call calendar#show(0,<f-args>)
-command! -nargs=* CalendarVR  call calendar#show(3,<f-args>)
-command! -nargs=* CalendarH call calendar#show(1,<f-args>)
-command! -nargs=* CalendarT call calendar#show(2,<f-args>)
+command! -nargs=* Diary  call diary#show(0,<f-args>)
+command! -nargs=* DiaryVR  call diary#show(3,<f-args>)
+command! -nargs=* DiaryH call diary#show(1,<f-args>)
+command! -nargs=* DiaryT call diary#show(2,<f-args>)
 
-if !get(g:, 'calendar_no_mappings', 0)
-  if !hasmapto('<Plug>CalendarV')
-    nmap <unique> <Leader>cal <Plug>CalendarV
+if !get(g:, 'diary_no_mappings', 0)
+  if !hasmapto('<Plug>DiaryV')
+    nmap <unique> <Leader>cal <Plug>DiaryV
   endif
-  if !hasmapto('<Plug>CalendarH')
-    nmap <unique> <Leader>caL <Plug>CalendarH
+  if !hasmapto('<Plug>DiaryH')
+    nmap <unique> <Leader>caL <Plug>DiaryH
   endif
 endif
-nnoremap <silent> <Plug>CalendarV :cal calendar#show(0)<CR>
-nnoremap <silent> <Plug>CalendarH :cal calendar#show(1)<CR>
-nnoremap <silent> <Plug>CalendarT :cal calendar#show(2)<CR>
+nnoremap <silent> <Plug>DiaryV :cal diary#show(0)<CR>
+nnoremap <silent> <Plug>DiaryH :cal diary#show(1)<CR>
+nnoremap <silent> <Plug>DiaryT :cal diary#show(2)<CR>
 
 " vi: et sw=2 ts=2

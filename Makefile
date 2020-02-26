@@ -1,11 +1,11 @@
-all : calendar-vim.zip
+all : diary-vim.zip
 
 remove-zip:
 	-rm doc/tags
-	-rm calendar-vim.zip
+	-rm diary-vim.zip
 
-calendar-vim.zip: remove-zip
-	zip -r calendar-vim.zip autoload plugin doc
+diary-vim.zip: remove-zip
+	zip -r diary-vim.zip autoload plugin doc
 
-release: calendar-vim.zip
-	vimup update-script calendar.vim
+release: diary-vim.zip
+	vimup update-script diary.vim

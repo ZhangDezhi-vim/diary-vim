@@ -1,54 +1,54 @@
-if !exists("g:calendar_action")
-  let g:calendar_action = "calendar#diary"
+if !exists("g:diary_action")
+  let g:diary_action = "diary#diary"
 endif
-if !exists("g:calendar_sign")
-  let g:calendar_sign = "calendar#sign"
+if !exists("g:diary_sign")
+  let g:diary_sign = "diary#sign"
 endif
-if !exists("g:calendar_mark")
- \|| (g:calendar_mark != 'left'
- \&& g:calendar_mark != 'left-fit'
- \&& g:calendar_mark != 'right')
-  let g:calendar_mark = 'left'
+if !exists("g:diary_mark")
+ \|| (g:diary_mark != 'left'
+ \&& g:diary_mark != 'left-fit'
+ \&& g:diary_mark != 'right')
+  let g:diary_mark = 'left'
 endif
-if !exists("g:calendar_navi")
- \|| (g:calendar_navi != 'top'
- \&& g:calendar_navi != 'bottom'
- \&& g:calendar_navi != 'both'
- \&& g:calendar_navi != '')
-  let g:calendar_navi = 'top'
+if !exists("g:diary_navi")
+ \|| (g:diary_navi != 'top'
+ \&& g:diary_navi != 'bottom'
+ \&& g:diary_navi != 'both'
+ \&& g:diary_navi != '')
+  let g:diary_navi = 'top'
 endif
-if !exists("g:calendar_navi_label")
-  let g:calendar_navi_label = "Prev,Today,Next"
+if !exists("g:diary_navi_label")
+  let g:diary_navi_label = "Prev,Today,Next"
 endif
-if !exists("g:calendar_diary")
-  let g:calendar_diary = "~/diary"
+if !exists("g:diary_diary")
+  let g:diary_diary = "~/diary"
 endif
-if !exists("g:calendar_focus_today")
-  let g:calendar_focus_today = 0
+if !exists("g:diary_focus_today")
+  let g:diary_focus_today = 0
 endif
-if !exists("g:calendar_datetime")
- \|| (g:calendar_datetime != ''
- \&& g:calendar_datetime != 'title'
- \&& g:calendar_datetime != 'statusline')
-  let g:calendar_datetime = 'title'
+if !exists("g:diary_datetime")
+ \|| (g:diary_datetime != ''
+ \&& g:diary_datetime != 'title'
+ \&& g:diary_datetime != 'statusline')
+  let g:diary_datetime = 'title'
 endif
-if !exists("g:calendar_options")
-  let g:calendar_options = "fdc=0 nonu"
+if !exists("g:diary_options")
+  let g:diary_options = "fdc=0 nonu"
   if has("+relativenumber")
-    let g:calendar_options .= " nornu"
+    let g:diary_options .= " nornu"
   endif
 endif
-if !exists("g:calendar_filetype")
-  let g:calendar_filetype = "markdown"
+if !exists("g:diary_filetype")
+  let g:diary_filetype = "markdown"
 endif
-if !exists("g:calendar_diary_extension")
-    let g:calendar_diary_extension = ".md"
+if !exists("g:diary_diary_extension")
+    let g:diary_diary_extension = ".md"
 endif
 
 "*****************************************************************
-"* Default Calendar key bindings
+"* Default Diary key bindings
 "*****************************************************************
-let s:calendar_keys = {
+let s:diary_keys = {
 \ 'close'           : 'q',
 \ 'do_action'       : '<CR>',
 \ 'goto_today'      : 't',
@@ -60,58 +60,58 @@ let s:calendar_keys = {
 \ 'goto_prev_year'  : '<DOWN>',
 \}
 
-if exists("g:calendar_keys") && type(g:calendar_keys) == 4
-  let s:calendar_keys = extend(s:calendar_keys, g:calendar_keys)
+if exists("g:diary_keys") && type(g:diary_keys) == 4
+  let s:diary_keys = extend(s:diary_keys, g:diary_keys)
 end
 
 "*****************************************************************
-"* CalendarClose : close the calendar
+"* DiaryClose : close the diary
 "*----------------------------------------------------------------
 "*****************************************************************
-function! calendar#close(...)
+function! diary#close(...)
   bw!
 endfunction
 
 "*****************************************************************
-"* CalendarDoAction : call the action handler function
+"* DiaryDoAction : call the action handler function
 "*----------------------------------------------------------------
 "*****************************************************************
-function! calendar#action(...)
+function! diary#action(...)
   " for navi
-  if exists('g:calendar_navi')
+  if exists('g:diary_navi')
     let navi = (a:0 > 0)? a:1 : expand("<cWORD>")
     let curl = line(".")
     let curp = getpos(".")
-    if navi == '<' . get(split(g:calendar_navi_label, ','), 0, '')
-      if b:CalendarMonth > 1
-        call calendar#show(b:CalendarDir, b:CalendarYear, b:CalendarMonth-1)
+    if navi == '<' . get(split(g:diary_navi_label, ','), 0, '')
+      if b:DiaryMonth > 1
+        call diary#show(b:DiaryDir, b:DiaryYear, b:DiaryMonth-1)
       else
-        call calendar#show(b:CalendarDir, b:CalendarYear-1, 12)
+        call diary#show(b:DiaryDir, b:DiaryYear-1, 12)
       endif
-    elseif navi == get(split(g:calendar_navi_label, ','), 2, '') . '>'
-      if b:CalendarMonth < 12
-        call calendar#show(b:CalendarDir, b:CalendarYear, b:CalendarMonth+1)
+    elseif navi == get(split(g:diary_navi_label, ','), 2, '') . '>'
+      if b:DiaryMonth < 12
+        call diary#show(b:DiaryDir, b:DiaryYear, b:DiaryMonth+1)
       else
-        call calendar#show(b:CalendarDir, b:CalendarYear+1, 1)
+        call diary#show(b:DiaryDir, b:DiaryYear+1, 1)
       endif
-    elseif navi == get(split(g:calendar_navi_label, ','), 1, '')
-      call calendar#show(b:CalendarDir)
-      if exists('g:calendar_today')
-        exe "call " . g:calendar_today . "()"
+    elseif navi == get(split(g:diary_navi_label, ','), 1, '')
+      call diary#show(b:DiaryDir)
+      if exists('g:diary_today')
+        exe "call " . g:diary_today . "()"
       endif
     elseif navi == 'NextYear'
-      call calendar#show(b:CalendarDir, b:CalendarYear + 1, b:CalendarMonth)
+      call diary#show(b:DiaryDir, b:DiaryYear + 1, b:DiaryMonth)
       call setpos('.', curp)
       return
     elseif navi == 'PrevYear'
-      call calendar#show(b:CalendarDir, b:CalendarYear - 1, b:CalendarMonth)
+      call diary#show(b:DiaryDir, b:DiaryYear - 1, b:DiaryMonth)
       call setpos('.', curp)
       return
     else
       let navi = ''
     endif
     if navi != ''
-      if g:calendar_focus_today == 1 && search("\*","w") > 0
+      if g:diary_focus_today == 1 && search("\*","w") > 0
         silent execute "normal! gg/\*\<cr>"
         return
       else
@@ -126,23 +126,23 @@ function! calendar#action(...)
   endif
 
   " if no action defined return
-  if !exists("g:calendar_action") || g:calendar_action == ""
+  if !exists("g:diary_action") || g:diary_action == ""
     return
   endif
 
-  if b:CalendarDir == 0 || b:CalendarDir == 3
+  if b:DiaryDir == 0 || b:DiaryDir == 3
     let dir = 'V'
     let cnr = 1
     let week = ((col(".")+1) / 3) - 1
-  elseif b:CalendarDir == 1
+  elseif b:DiaryDir == 1
     let dir = 'H'
-    if exists('g:calendar_weeknm')
+    if exists('g:diary_weeknm')
       let cnr = col('.') - (col('.')%(24+5)) + 1
     else
       let cnr = col('.') - (col('.')%(24)) + 1
     endif
     let week = ((col(".") - cnr - 1 + cnr/49) / 3)
-  elseif b:CalendarDir == 2
+  elseif b:DiaryDir == 2
     let dir = 'T'
     let cnr = 1
     let week = ((col(".")+1) / 3) - 1
@@ -160,7 +160,7 @@ function! calendar#action(...)
     let lnr = lnr + 1
   endwhile
   let lnr = line('.')
-  if(exists('g:calendar_monday'))
+  if(exists('g:diary_monday'))
       let week = week + 1
   elseif(week == 0)
       let week = 7
@@ -169,13 +169,13 @@ function! calendar#action(...)
     return
   endif
   let sline = substitute(strpart(getline(hdr),cnr,21),'\s*\(.*\)\s*','\1','')
-  if b:CalendarDir != 2
+  if b:DiaryDir != 2
     if (col(".")-cnr) > 21
       return
     endif
 
     " extract day
-    if g:calendar_mark == 'right' && col('.') > 1
+    if g:diary_mark == 'right' && col('.') > 1
       normal! h
       let day = matchstr(expand("<cword>"), '[^0].*')
       normal! l
@@ -198,11 +198,11 @@ function! calendar#action(...)
     return
   endif
   " extract year and month
-  if exists('g:calendar_erafmt') && g:calendar_erafmt !~ "^\s*$"
+  if exists('g:diary_erafmt') && g:diary_erafmt !~ "^\s*$"
     let year = matchstr(substitute(sline, '/.*', '', ''), '\d\+')
     let month = matchstr(substitute(sline, '.*/\(\d\d\=\).*', '\1', ""), '[^0].*')
-    if g:calendar_erafmt =~ '.*,[+-]*\d\+'
-      let veranum = substitute(g:calendar_erafmt,'.*,\([+-]*\d\+\)','\1','')
+    if g:diary_erafmt =~ '.*,[+-]*\d\+'
+      let veranum = substitute(g:diary_erafmt,'.*,\([+-]*\d\+\)','\1','')
       if year-veranum > 0
         let year = year-veranum
       endif
@@ -212,17 +212,17 @@ function! calendar#action(...)
     let month = matchstr(substitute(sline, '\d*/\(\d\d\=\).*', '\1', ""), '[^0].*')
   endif
   " call the action function
-  exe "call " . g:calendar_action . "(day, month, year, week, dir)"
+  exe "call " . g:diary_action . "(day, month, year, week, dir)"
 endfunc
 
 "*****************************************************************
-"* Calendar : build calendar
+"* Diary : build diary
 "*----------------------------------------------------------------
 "*   a1 : direction
 "*   a2 : month(if given a3, it's year)
 "*   a3 : if given, it's month
 "*****************************************************************
-function! calendar#show(...)
+function! diary#show(...)
 
   "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   "+++ ready for build
@@ -271,13 +271,13 @@ function! calendar#show(...)
   "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   "+++ build display
   "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  if exists("g:calendar_begin")
-    exe "call " . g:calendar_begin . "()"
+  if exists("g:diary_begin")
+    exe "call " . g:diary_begin . "()"
   endif
   if dir == 2
     let vmcntmax = 1
     let whitehrz = ''
-    if !exists('b:CalendarDir') && !(bufname('%') == '' && &l:modified == 0)
+    if !exists('b:DiaryDir') && !(bufname('%') == '' && &l:modified == 0)
       let width = &columns
       let height = &lines - 2
     else
@@ -294,7 +294,7 @@ function! calendar#show(...)
       let h = h + 1
     endwhile
     let whitehrz = whitehrz.'|'
-    let navifix = (exists('g:calendar_navi') && g:calendar_navi == 'both') * 2
+    let navifix = (exists('g:diary_navi') && g:diary_navi == 'both') * 2
     let vrt = (height - &cmdheight - 3 - navifix) / 6 - 2
     if vrt < 0
       let vrt = 0
@@ -335,7 +335,7 @@ function! calendar#show(...)
     let fridaycol = (strlen(whitehrz) + 3) * 5 + strlen(whiteleft) + 1
     let saturdaycol = (strlen(whitehrz) + 3) * 6 + strlen(whiteleft) + 1
   else
-    let vmcntmax = get(g:, 'calendar_number_of_months', 3)
+    let vmcntmax = get(g:, 'diary_number_of_months', 3)
   endif
   while vmcnt < vmcntmax
     let vcolumn = 22
@@ -426,47 +426,47 @@ function! calendar#show(...)
       endif
       let vnweek = vnweek - 1
     endif
-
+    
     " fix Gregorian
     if vyear <= 1752
       let vnweek = vnweek - 3
     endif
-
+    
     let vnweek = vnweek % 7
-
-    if exists('g:calendar_monday')
-      " if given g:calendar_monday, the week start with monday
+    
+    if exists('g:diary_monday')
+      " if given g:diary_monday, the week start with monday
       if vnweek == 0
         let vnweek = 7
       endif
       let vnweek = vnweek - 1
     endif
-
-    if exists('g:calendar_weeknm')
-      " if given g:calendar_weeknm, show week number(ref:ISO8601)
-
+    
+    if exists('g:diary_weeknm')
+      " if given g:diary_weeknm, show week number(ref:ISO8601)
+    
       "vparam <= 1. day of month
       "vnweek <= 1. weekday of month (0-6)
       "viweek <= number of week
       "vfweek <= 1. day of year
-
+    
       " Mon Tue Wed Thu Fri Sat Sun
       " 6   5   4   3   2   1   0  vfweek
       " 0   1   2   3   4   5   6  vnweek
-
+    
       let vfweek =((vparam % 7)  -vnweek+ 14-2) % 7
       let viweek = (vparam - vfweek-2+7 ) / 7 +1
-
+    
       if vfweek < 3
          let viweek = viweek - 1
       endif
-
+    
       "vfweekl  <=year length
       let vfweekl = 52
       if vfweek == 3 || (vfweek == 4 && vleap)
         let vfweekl = 53
       endif
-
+    
       if viweek == 0
         "belongs to last week number of previous year
         let viweek = 52
@@ -476,22 +476,22 @@ function! calendar#show(...)
           let viweek = 53
         endif
       endif
-
+    
       let vcolumn = vcolumn + 5
-      if g:calendar_weeknm == 5
+      if g:diary_weeknm == 5
         let vcolumn = vcolumn - 2
       endif
     endif
-
+    
     "--------------------------------------------------------------
     "--- displaying
     "--------------------------------------------------------------
     " build header
-    if exists('g:calendar_erafmt') && g:calendar_erafmt !~ "^\s*$"
-      if g:calendar_erafmt =~ '.*,[+-]*\d\+'
-        let veranum = substitute(g:calendar_erafmt,'.*,\([+-]*\d\+\)','\1','')
+    if exists('g:diary_erafmt') && g:diary_erafmt !~ "^\s*$"
+      if g:diary_erafmt =~ '.*,[+-]*\d\+'
+        let veranum = substitute(g:diary_erafmt,'.*,\([+-]*\d\+\)','\1','')
         if vyear+veranum > 0
-          let vdisplay2 = substitute(g:calendar_erafmt,'\(.*\),.*','\1','')
+          let vdisplay2 = substitute(g:diary_erafmt,'\(.*\),.*','\1','')
           let vdisplay2 = vdisplay2.(vyear+veranum).'/'.vmnth.'('
         else
           let vdisplay2 = vyear.'/'.vmnth.'('
@@ -506,16 +506,16 @@ function! calendar#show(...)
       let vdisplay2 = strpart("                           ",
         \ 1,(vcolumn-strlen(vdisplay2))/2-2).vdisplay2
     endif
-    if exists('g:calendar_mruler') && g:calendar_mruler !~ "^\s*$"
-      let vdisplay2 = vdisplay2 . get(split(g:calendar_mruler, ','), vmnth-1, '').')'."\n"
+    if exists('g:diary_mruler') && g:diary_mruler !~ "^\s*$"
+      let vdisplay2 = vdisplay2 . get(split(g:diary_mruler, ','), vmnth-1, '').')'."\n"
     else
       let vdisplay2 = vdisplay2 . vsmnth.')'."\n"
     endif
     let vwruler = "Su Mo Tu We Th Fr Sa"
-    if exists('g:calendar_wruler') && g:calendar_wruler !~ "^\s*$"
-      let vwruler = g:calendar_wruler
+    if exists('g:diary_wruler') && g:diary_wruler !~ "^\s*$"
+      let vwruler = g:diary_wruler
     endif
-    if exists('g:calendar_monday')
+    if exists('g:diary_monday')
       let vwruler = strpart(vwruler,stridx(vwruler, ' ') + 1).' '.strpart(vwruler,0,stridx(vwruler, ' '))
     endif
     if dir == 2
@@ -525,11 +525,11 @@ function! calendar#show(...)
     else
       let vdisplay2 = vdisplay2.' '.vwruler."\n"
     endif
-    if g:calendar_mark == 'right' && dir != 2
+    if g:diary_mark == 'right' && dir != 2
       let vdisplay2 = vdisplay2.' '
     endif
-
-    " build calendar
+    
+    " build diary
     let vinpcur = 0
     while (vinpcur < vnweek)
       if dir == 2
@@ -561,8 +561,8 @@ function! calendar#show(...)
       else
          let vtarget = vtarget.vdaycur
       endif
-      if exists("g:calendar_sign") && g:calendar_sign != ""
-        exe "let vsign = " . g:calendar_sign . "(vdaycur, vmnth, vyear)"
+      if exists("g:diary_sign") && g:diary_sign != ""
+        exe "let vsign = " . g:diary_sign . "(vdaycur, vmnth, vyear)"
         if vsign != ""
           let vsign = vsign[0]
           if vsign !~ "[+!#$%&@?]"
@@ -572,14 +572,14 @@ function! calendar#show(...)
       else
         let vsign = ''
       endif
-
+    
       " show mark
-      if g:calendar_mark == 'right'
+      if g:diary_mark == 'right'
         if vdaycur < 10
           let vdisplay2 = vdisplay2.' '
         endif
         let vdisplay2 = vdisplay2.vdaycur
-      elseif g:calendar_mark == 'left-fit'
+      elseif g:diary_mark == 'left-fit'
         if vdaycur < 10
           let vdisplay2 = vdisplay2.' '
         endif
@@ -591,67 +591,67 @@ function! calendar#show(...)
       else
         let vdisplay2 = vdisplay2.' '
       endif
-      if g:calendar_mark == 'left'
+      if g:diary_mark == 'left'
         if vdaycur < 10
           let vdisplay2 = vdisplay2.' '
         endif
         let vdisplay2 = vdisplay2.vdaycur
       endif
-      if g:calendar_mark == 'left-fit'
+      if g:diary_mark == 'left-fit'
         let vdisplay2 = vdisplay2.vdaycur
       endif
       let vdaycur = vdaycur + 1
-
+    
       " fix Gregorian
       if vyear == 1752 && vmnth == 9 && vdaycur == 3
         let vdaycur = 14
       endif
-
+    
       let vinpcur = vinpcur + 1
       if vinpcur % 7 == 0
-        if exists('g:calendar_weeknm')
+        if exists('g:diary_weeknm')
           if dir == 2
             let vdisplay2 = vdisplay2.whitehrz
           endif
-          if g:calendar_mark != 'right'
+          if g:diary_mark != 'right'
             let vdisplay2 = vdisplay2.' '
           endif
-          " if given g:calendar_weeknm, show week number
+          " if given g:diary_weeknm, show week number
           if viweek < 10
-            if g:calendar_weeknm == 1
+            if g:diary_weeknm == 1
               let vdisplay2 = vdisplay2.'WK0'.viweek
-            elseif g:calendar_weeknm == 2
+            elseif g:diary_weeknm == 2
               let vdisplay2 = vdisplay2.'WK '.viweek
-            elseif g:calendar_weeknm == 3
+            elseif g:diary_weeknm == 3
               let vdisplay2 = vdisplay2.'KW0'.viweek
-            elseif g:calendar_weeknm == 4
+            elseif g:diary_weeknm == 4
               let vdisplay2 = vdisplay2.'KW '.viweek
-            elseif g:calendar_weeknm == 5
+            elseif g:diary_weeknm == 5
               let vdisplay2 = vdisplay2.' '.viweek
             endif
           else
-            if g:calendar_weeknm <= 2
+            if g:diary_weeknm <= 2
               let vdisplay2 = vdisplay2.'WK'.viweek
-            elseif g:calendar_weeknm == 3 || g:calendar_weeknm == 4
+            elseif g:diary_weeknm == 3 || g:diary_weeknm == 4
               let vdisplay2 = vdisplay2.'KW'.viweek
-            elseif g:calendar_weeknm == 5
+            elseif g:diary_weeknm == 5
               let vdisplay2 = vdisplay2.viweek
             endif
           endif
           let viweek = viweek + 1
-
+    
           if viweek > vfweekl
             let viweek = 1
           endif
-
+    
         endif
         let vdisplay2 = vdisplay2."\n"
-        if g:calendar_mark == 'right' && dir != 2
+        if g:diary_mark == 'right' && dir != 2
           let vdisplay2 = vdisplay2.' '
         endif
       endif
     endwhile
-
+    
     " if it is needed, fill with space
     if vinpcur % 7
       while (vinpcur % 7 != 0)
@@ -661,37 +661,37 @@ function! calendar#show(...)
         let vdisplay2 = vdisplay2.'   '
         let vinpcur = vinpcur + 1
       endwhile
-      if exists('g:calendar_weeknm')
+      if exists('g:diary_weeknm')
         if dir == 2
           let vdisplay2 = vdisplay2.whitehrz
         endif
-        if g:calendar_mark != 'right'
+        if g:diary_mark != 'right'
           let vdisplay2 = vdisplay2.' '
         endif
         if viweek < 10
-          if g:calendar_weeknm == 1
+          if g:diary_weeknm == 1
             let vdisplay2 = vdisplay2.'WK0'.viweek
-          elseif g:calendar_weeknm == 2
+          elseif g:diary_weeknm == 2
             let vdisplay2 = vdisplay2.'WK '.viweek
-          elseif g:calendar_weeknm == 3
+          elseif g:diary_weeknm == 3
             let vdisplay2 = vdisplay2.'KW0'.viweek
-          elseif g:calendar_weeknm == 4
+          elseif g:diary_weeknm == 4
             let vdisplay2 = vdisplay2.'KW '.viweek
-          elseif g:calendar_weeknm == 5
+          elseif g:diary_weeknm == 5
             let vdisplay2 = vdisplay2.' '.viweek
           endif
         else
-          if g:calendar_weeknm <= 2
+          if g:diary_weeknm <= 2
             let vdisplay2 = vdisplay2.'WK'.viweek
-          elseif g:calendar_weeknm == 3 || g:calendar_weeknm == 4
+          elseif g:diary_weeknm == 3 || g:diary_weeknm == 4
             let vdisplay2 = vdisplay2.'KW'.viweek
-          elseif g:calendar_weeknm == 5
+          elseif g:diary_weeknm == 5
             let vdisplay2 = vdisplay2.viweek
           endif
         endif
       endif
     endif
-
+    
     " build display
     let vstrline = ''
     if dir == 1
@@ -775,7 +775,7 @@ function! calendar#show(...)
           endif
         endwhile
         if vtokline > 2
-          if exists('g:calendar_weeknm')
+          if exists('g:diary_weeknm')
             let vright = whitevrtweeknm
           elseif whitehrz == '|'
             let vright = whitevrt
@@ -798,8 +798,8 @@ function! calendar#show(...)
       let vyear = vyear + 1
     endif
   endwhile
-  if exists("g:calendar_end")
-    exe "call " . g:calendar_end . "()"
+  if exists("g:diary_end")
+    exe "call " . g:diary_end . "()"
   endif
   if a:0 == 0
     return vdisplay1
@@ -809,8 +809,8 @@ function! calendar#show(...)
   "+++ build window
   "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   " make window
-  let vwinnum = bufnr('__Calendar')
-  if getbufvar(vwinnum, 'Calendar') == 'Calendar'
+  let vwinnum = bufnr('__Diary')
+  if getbufvar(vwinnum, 'Diary') == 'Diary'
     let vwinnum = bufwinnr(vwinnum)
   else
     let vwinnum = -1
@@ -825,71 +825,71 @@ function! calendar#show(...)
     silent %d _
   else
     " make title
-    if g:calendar_datetime == "title" && (!exists('s:bufautocommandsset'))
-      auto BufEnter *Calendar let b:sav_titlestring = &titlestring | let &titlestring = '%{strftime("%c")}'
-      auto BufLeave *Calendar if exists('b:sav_titlestring') | let &titlestring = b:sav_titlestring | endif
+    if g:diary_datetime == "title" && (!exists('s:bufautocommandsset'))
+      auto BufEnter *Diary let b:sav_titlestring = &titlestring | let &titlestring = '%{strftime("%c")}'
+      auto BufLeave *Diary if exists('b:sav_titlestring') | let &titlestring = b:sav_titlestring | endif
       let s:bufautocommandsset = 1
     endif
 
-    if exists('g:calendar_navi') && dir
-      if g:calendar_navi == 'both'
+    if exists('g:diary_navi') && dir
+      if g:diary_navi == 'both'
         let vheight = vheight + 4
       else
         let vheight = vheight + 2
       endif
     endif
-
+    
     " or not
     if dir == 1
-      silent execute 'bo '.vheight.'split __Calendar'
+      silent execute 'bo '.vheight.'split __Diary'
       setlocal winfixheight
     elseif dir == 0
-      silent execute 'to '.vcolumn.'vsplit __Calendar'
+      silent execute 'to '.vcolumn.'vsplit __Diary'
       setlocal winfixwidth
     elseif dir == 3
-      silent execute 'bo '.vcolumn.'vsplit __Calendar'
+      silent execute 'bo '.vcolumn.'vsplit __Diary'
       setlocal winfixwidth
     elseif bufname('%') == '' && &l:modified == 0
-      silent execute 'edit __Calendar'
+      silent execute 'edit __Diary'
     else
-      silent execute 'tabnew __Calendar'
+      silent execute 'tabnew __Diary'
     endif
-    call s:CalendarBuildKeymap(dir, vyear, vmnth)
+    call s:DiaryBuildKeymap(dir, vyear, vmnth)
     setlocal noswapfile
     setlocal buftype=nofile
     setlocal bufhidden=delete
-    silent! exe "setlocal " . g:calendar_options
+    silent! exe "setlocal " . g:diary_options
     let nontext_columns = &foldcolumn + &nu * &numberwidth
     if has("+relativenumber")
       let nontext_columns += &rnu * &numberwidth
     endif
     " Without this, the 'sidescrolloff' setting may cause the left side of the
-    " calendar to disappear if the last inserted element is near the right
+    " diary to disappear if the last inserted element is near the right
     " window border.
     setlocal nowrap
     setlocal norightleft
     setlocal modifiable
     setlocal nolist
-    let b:Calendar = 'Calendar'
-    setlocal filetype=calendar
+    let b:Diary = 'Diary'
+    setlocal filetype=diary
     " is this a vertical (0) or a horizontal (1) split?
     if dir != 2
       exe vcolumn + nontext_columns . "wincmd |"
     endif
   endif
-  if g:calendar_datetime == "statusline"
+  if g:diary_datetime == "statusline"
     setlocal statusline=%{strftime('%c')}
   endif
-  let b:CalendarDir = dir
-  let b:CalendarYear = vyear_org
-  let b:CalendarMonth = vmnth_org
+  let b:DiaryDir = dir
+  let b:DiaryYear = vyear_org
+  let b:DiaryMonth = vmnth_org
 
   " navi
-  if exists('g:calendar_navi')
+  if exists('g:diary_navi')
     let navi_label = '<'
-        \.get(split(g:calendar_navi_label, ','), 0, '').' '
-        \.get(split(g:calendar_navi_label, ','), 1, '').' '
-        \.get(split(g:calendar_navi_label, ','), 2, '').'>'
+        \.get(split(g:diary_navi_label, ','), 0, '').' '
+        \.get(split(g:diary_navi_label, ','), 1, '').' '
+        \.get(split(g:diary_navi_label, ','), 2, '').'>'
     if dir == 1
       let navcol = vcolumn + (vcolumn-strlen(navi_label)+2)/2
     elseif (dir == 0 ||dir == 3)
@@ -901,18 +901,18 @@ function! calendar#show(...)
       let navcol = 3
     endif
 
-    if g:calendar_navi == 'top'
+    if g:diary_navi == 'top'
       execute "normal gg".navcol."i "
       silent exec "normal! a".navi_label."\<cr>\<cr>"
       silent put! =vdisplay1
     endif
-    if g:calendar_navi == 'bottom'
+    if g:diary_navi == 'bottom'
       silent put! =vdisplay1
       silent exec "normal! Gi\<cr>"
       execute "normal ".navcol."i "
       silent exec "normal! a".navi_label
     endif
-    if g:calendar_navi == 'both'
+    if g:diary_navi == 'both'
       execute "normal gg".navcol."i "
       silent exec "normal! a".navi_label."\<cr>\<cr>"
       silent put! =vdisplay1
@@ -925,7 +925,7 @@ function! calendar#show(...)
   endif
 
   setlocal nomodifiable
-  " In case we've gotten here from insert mode (via <C-O>:Calendar<CR>)...
+  " In case we've gotten here from insert mode (via <C-O>:Diary<CR>)...
   stopinsert
 
   let vyear = vyear_org
@@ -936,10 +936,10 @@ function! calendar#show(...)
   "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   " today
   syn clear
-  if g:calendar_mark =~ 'left-fit'
+  if g:diary_mark =~ 'left-fit'
     syn match CalToday display "\s*\*\d*"
     syn match CalMemo display "\s*[+!#$%&@?]\d*"
-  elseif g:calendar_mark =~ 'right'
+  elseif g:diary_mark =~ 'right'
     syn match CalToday display "\d*\*\s*"
     syn match CalMemo display "\d*[+!#$%&@?]\s*"
   else
@@ -950,17 +950,17 @@ function! calendar#show(...)
   syn match CalHeader display "[^ ]*\d\+\/\d\+([^)]*)"
 
   " navi
-  if exists('g:calendar_navi')
+  if exists('g:diary_navi')
     exec "silent! syn match CalNavi display \"\\(<"
-        \.get(split(g:calendar_navi_label, ','), 0, '')."\\|"
-        \.get(split(g:calendar_navi_label, ','), 2, '').">\\)\""
+        \.get(split(g:diary_navi_label, ','), 0, '')."\\|"
+        \.get(split(g:diary_navi_label, ','), 2, '').">\\)\""
     exec "silent! syn match CalNavi display \"\\s"
-        \.get(split(g:calendar_navi_label, ','), 1, '')."\\s\"hs=s+1,he=e-1"
+        \.get(split(g:diary_navi_label, ','), 1, '')."\\s\"hs=s+1,he=e-1"
   endif
 
   " saturday, sunday
 
-  if exists('g:calendar_monday')
+  if exists('g:diary_monday')
     if dir == 1
       syn match CalSaturday display /|.\{15}\s\([0-9\ ]\d\)/hs=e-1 contains=ALL
       syn match CalSunday display /|.\{18}\s\([0-9\ ]\d\)/hs=e-1 contains=ALL
@@ -985,7 +985,7 @@ function! calendar#show(...)
   endif
 
   " week number
-  if !exists('g:calendar_weeknm') || g:calendar_weeknm <= 2
+  if !exists('g:diary_weeknm') || g:diary_weeknm <= 2
     syn match CalWeeknm display "WK[0-9\ ]\d"
   else
     syn match CalWeeknm display "KW[0-9\ ]\d"
@@ -1030,19 +1030,19 @@ function! s:make_dir(dir)
 endfunc
 
 "*****************************************************************
-"* diary : calendar hook function
+"* diary : diary hook function
 "*----------------------------------------------------------------
 "*   day   : day you actioned
 "*   month : month you actioned
 "*   year  : year you actioned
 "*****************************************************************
-function! calendar#diary(day, month, year, week, dir)
+function! diary#diary(day, month, year, week, dir)
   " build the file name and create directories as needed
-  if !isdirectory(expand(g:calendar_diary))
-    call confirm("please create diary directory : ".g:calendar_diary, 'OK')
+  if !isdirectory(expand(g:diary_diary))
+    call confirm("please create diary directory : ".g:diary_diary, 'OK')
     return
   endif
-  let sfile = expand(g:calendar_diary) . "/" . printf("%04d", a:year)
+  let sfile = expand(g:diary_diary) . "/" . printf("%04d", a:year)
   if isdirectory(sfile) == 0
     if s:make_dir(sfile) != 0
       return
@@ -1054,37 +1054,37 @@ function! calendar#diary(day, month, year, week, dir)
       return
     endif
   endif
-  let sfile = expand(sfile) . "/" . printf("%02d", a:day) . g:calendar_diary_extension
+  let sfile = expand(sfile) . "/" . printf("%02d", a:day) . g:diary_diary_extension
   let sfile = substitute(sfile, ' ', '\\ ', 'g')
-  let vbufnr = bufnr('__Calendar')
+  let vbufnr = bufnr('__Diary')
 
   " load the file
   exe "wincmd w"
   exe "edit  " . sfile
-  exe "setfiletype " . g:calendar_filetype
-  let dir = getbufvar(vbufnr, "CalendarDir")
-  let vyear = getbufvar(vbufnr, "CalendarYear")
-  let vmnth = getbufvar(vbufnr, "CalendarMonth")
-  exe "auto BufDelete ".escape(sfile, ' \\')." call calendar#show(" . dir . "," . vyear . "," . vmnth . ")"
+  exe "setfiletype " . g:diary_filetype
+  let dir = getbufvar(vbufnr, "DiaryDir")
+  let vyear = getbufvar(vbufnr, "DiaryYear")
+  let vmnth = getbufvar(vbufnr, "DiaryMonth")
+  exe "auto BufDelete ".escape(sfile, ' \\')." call diary#show(" . dir . "," . vyear . "," . vmnth . ")"
 endfunc
 
 "*****************************************************************
-"* sign : calendar sign function
+"* sign : diary sign function
 "*----------------------------------------------------------------
 "*   day   : day of sign
 "*   month : month of sign
 "*   year  : year of sign
 "*****************************************************************
-function! calendar#sign(day, month, year)
-  let sfile = g:calendar_diary."/".printf("%04d", a:year)."/".printf("%02d", a:month)."/".printf("%02d", a:day).g:calendar_diary_extension
+function! diary#sign(day, month, year)
+  let sfile = g:diary_diary."/".printf("%04d", a:year)."/".printf("%02d", a:month)."/".printf("%02d", a:day).g:diary_diary_extension
   return filereadable(expand(sfile))
 endfunction
 
 "*****************************************************************
-"* CalendarVar : get variable
+"* DiaryVar : get variable
 "*----------------------------------------------------------------
 "*****************************************************************
-function! s:CalendarVar(var)
+function! s:DiaryVar(var)
   if !exists(a:var)
     return ''
   endif
@@ -1092,44 +1092,44 @@ function! s:CalendarVar(var)
 endfunction
 
 "*****************************************************************
-"* CalendarBuildKeymap : build keymap
+"* DiaryBuildKeymap : build keymap
 "*----------------------------------------------------------------
 "*****************************************************************
-function! s:CalendarBuildKeymap(dir, vyear, vmnth)
+function! s:DiaryBuildKeymap(dir, vyear, vmnth)
   " make keymap
-  nnoremap <silent> <buffer> <Plug>CalendarClose  :call calendar#close()<cr>
-  nnoremap <silent> <buffer> <Plug>CalendarDoAction  :call calendar#action()<cr>
-  nnoremap <silent> <buffer> <Plug>CalendarDoAction  :call calendar#action()<cr>
-  nnoremap <silent> <buffer> <Plug>CalendarGotoToday :call calendar#show(b:CalendarDir)<cr>
-  nnoremap <silent> <buffer> <Plug>CalendarShowHelp  :call <SID>CalendarHelp()<cr>
-  execute 'nnoremap <silent> <buffer> <Plug>CalendarReDisplay :call calendar#show(' . a:dir . ',' . a:vyear . ',' . a:vmnth . ')<cr>'
-  let pnav = get(split(g:calendar_navi_label, ','), 0, '')
-  let nnav = get(split(g:calendar_navi_label, ','), 2, '')
-  execute 'nnoremap <silent> <buffer> <Plug>CalendarGotoPrevMonth :call calendar#action("<' . pnav . '")<cr>'
-  execute 'nnoremap <silent> <buffer> <Plug>CalendarGotoNextMonth :call calendar#action("' . nnav . '>")<cr>'
-  execute 'nnoremap <silent> <buffer> <Plug>CalendarGotoPrevYear  :call calendar#action("PrevYear")<cr>'
-  execute 'nnoremap <silent> <buffer> <Plug>CalendarGotoNextYear  :call calendar#action("NextYear")<cr>'
+  nnoremap <silent> <buffer> <Plug>DiaryClose  :call diary#close()<cr>
+  nnoremap <silent> <buffer> <Plug>DiaryDoAction  :call diary#action()<cr>
+  nnoremap <silent> <buffer> <Plug>DiaryDoAction  :call diary#action()<cr>
+  nnoremap <silent> <buffer> <Plug>DiaryGotoToday :call diary#show(b:DiaryDir)<cr>
+  nnoremap <silent> <buffer> <Plug>DiaryShowHelp  :call <SID>DiaryHelp()<cr>
+  execute 'nnoremap <silent> <buffer> <Plug>DiaryReDisplay :call diary#show(' . a:dir . ',' . a:vyear . ',' . a:vmnth . ')<cr>'
+  let pnav = get(split(g:diary_navi_label, ','), 0, '')
+  let nnav = get(split(g:diary_navi_label, ','), 2, '')
+  execute 'nnoremap <silent> <buffer> <Plug>DiaryGotoPrevMonth :call diary#action("<' . pnav . '")<cr>'
+  execute 'nnoremap <silent> <buffer> <Plug>DiaryGotoNextMonth :call diary#action("' . nnav . '>")<cr>'
+  execute 'nnoremap <silent> <buffer> <Plug>DiaryGotoPrevYear  :call diary#action("PrevYear")<cr>'
+  execute 'nnoremap <silent> <buffer> <Plug>DiaryGotoNextYear  :call diary#action("NextYear")<cr>'
 
-  nmap <buffer> <2-LeftMouse> <Plug>CalendarDoAction
+  nmap <buffer> <2-LeftMouse> <Plug>DiaryDoAction
 
-  execute 'nmap <buffer> ' . s:calendar_keys['close'] . ' <Plug>CalendarClose'
-  execute 'nmap <buffer> ' . s:calendar_keys['do_action'] . ' <Plug>CalendarDoAction'
-  execute 'nmap <buffer> ' . s:calendar_keys['goto_today'] . ' <Plug>CalendarGotoToday'
-  execute 'nmap <buffer> ' . s:calendar_keys['show_help'] . ' <Plug>CalendarShowHelp'
-  execute 'nmap <buffer> ' . s:calendar_keys['redisplay'] . ' <Plug>CalendarRedisplay'
+  execute 'nmap <buffer> ' . s:diary_keys['close'] . ' <Plug>DiaryClose'
+  execute 'nmap <buffer> ' . s:diary_keys['do_action'] . ' <Plug>DiaryDoAction'
+  execute 'nmap <buffer> ' . s:diary_keys['goto_today'] . ' <Plug>DiaryGotoToday'
+  execute 'nmap <buffer> ' . s:diary_keys['show_help'] . ' <Plug>DiaryShowHelp'
+  execute 'nmap <buffer> ' . s:diary_keys['redisplay'] . ' <Plug>DiaryRedisplay'
 
-  execute 'nmap <buffer> ' . s:calendar_keys['goto_next_month'] . ' <Plug>CalendarGotoNextMonth'
-  execute 'nmap <buffer> ' . s:calendar_keys['goto_prev_month'] . ' <Plug>CalendarGotoPrevMonth'
-  execute 'nmap <buffer> ' . s:calendar_keys['goto_next_year'] . ' <Plug>CalendarGotoNextYear'
-  execute 'nmap <buffer> ' . s:calendar_keys['goto_prev_year'] . ' <Plug>CalendarGotoPrevYear'
+  execute 'nmap <buffer> ' . s:diary_keys['goto_next_month'] . ' <Plug>DiaryGotoNextMonth'
+  execute 'nmap <buffer> ' . s:diary_keys['goto_prev_month'] . ' <Plug>DiaryGotoPrevMonth'
+  execute 'nmap <buffer> ' . s:diary_keys['goto_next_year'] . ' <Plug>DiaryGotoNextYear'
+  execute 'nmap <buffer> ' . s:diary_keys['goto_prev_year'] . ' <Plug>DiaryGotoPrevYear'
 endfunction
 
 "*****************************************************************
-"* CalendarHelp : show help for Calendar
+"* DiaryHelp : show help for Diary
 "*----------------------------------------------------------------
 "*****************************************************************
-function! s:CalendarHelp()
-  let ck = s:calendar_keys
+function! s:DiaryHelp()
+  let ck = s:diary_keys
   let max_width = max(map(values(ck), 'len(v:val)'))
   let offsets = map(copy(ck), '1 + max_width - len(v:val)')
 
@@ -1142,21 +1142,21 @@ function! s:CalendarHelp()
   echo ck['close']            . repeat(' ', offsets['close'])           . ': close window'
   echo ck['redisplay']        . repeat(' ', offsets['redisplay'])       . ': re-display window'
   echo ck['show_help']        . repeat(' ', offsets['show_help'])       . ': show this help'
-  if g:calendar_action == "calendar#diary"
+  if g:diary_action == "diary#diary"
     echo ck['do_action']      . repeat(' ', offsets['do_action'])       . ': show diary'
   endif
   echo ''
   echohl Question
 
   let vk = [
-  \ 'calendar_erafmt',
-  \ 'calendar_mruler',
-  \ 'calendar_wruler',
-  \ 'calendar_weeknm',
-  \ 'calendar_navi_label',
-  \ 'calendar_diary',
-  \ 'calendar_mark',
-  \ 'calendar_navi',
+  \ 'diary_erafmt',
+  \ 'diary_mruler',
+  \ 'diary_wruler',
+  \ 'diary_weeknm',
+  \ 'diary_navi_label',
+  \ 'diary_diary',
+  \ 'diary_mark',
+  \ 'diary_navi',
   \]
   let max_width = max(map(copy(vk), 'len(v:val)'))
 
